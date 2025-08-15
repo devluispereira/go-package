@@ -1,4 +1,4 @@
-module gitlab.globoi.com/globoplay/go-prime
+module github.com/devluispereira/go-package
 
 go 1.24.2
 
