@@ -16,12 +16,7 @@ type RedisClient struct {
 	client redis.UniversalClient
 }
 
-type IRedisClient interface {
-	Get(ctx context.Context, key string) (string, error)
-	Set(ctx context.Context, key string, value any, expiration time.Duration) error
-}
-
-func NewRedisClientFromURL(rawURL string) (IRedisClient, error) {
+func NewRedisClientFromURL(rawURL string) (*RedisClient, error) {
 	logger := log.New(os.Stdout, "redis-client", 1)
 
 	cleanURL := cleanRedisURL(rawURL)
