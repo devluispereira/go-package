@@ -50,7 +50,7 @@ type CachePolicy struct {
 	Headers []string `json:"headers"`
 }
 
-// CacheMiddleware is an HTTP middleware that provides transparent caching for GET requests using a Redis backend.
+// NewCacheMiddleware is an HTTP middleware that provides transparent caching for GET requests using a Redis backend.
 //
 // It checks if the cache is enabled and a Redis client is configured. For each GET request, it attempts to retrieve
 // a cached response from Redis using a generated cache key. If a valid cached response is found, it is deserialized
@@ -69,7 +69,7 @@ type CachePolicy struct {
 // Returns:
 //
 //	A function that wraps an http.RoundTripper with caching logic.
-func CacheMiddleware(cfg *CacheConfig) func(next http.RoundTripper) http.RoundTripper {
+func NewCacheMiddleware(cfg *CacheConfig) func(next http.RoundTripper) http.RoundTripper {
 	return func(next http.RoundTripper) http.RoundTripper {
 		return RoundTripperFunc(func(req *http.Request) (*http.Response, error) {
 			if cfg.RedisClient == nil {
@@ -151,7 +151,7 @@ func CacheMiddleware(cfg *CacheConfig) func(next http.RoundTripper) http.RoundTr
 				}
 
 				go func() {
-					setErr := cfg.RedisClient.Set(context.Background(), cacheKey, cachedValue, ttl)
+					setErr := cfg.RedisClient.Set(req.Context(), cacheKey, cachedValue, ttl)
 
 					if setErr != nil {
 						logger.Error().Err(setErr).Msg("Error saving to cache")
